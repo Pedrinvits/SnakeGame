@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Jogo da cobrinha</title>
+</head>
+<body>
+
+	<canvas id="stage" width="600" height="600"></canvas>
+	<script type="text/javascript">
+		
+		window.onload = function(){
+
+			var stage = document.getElementById('stage');
+			var ctx = stage.getContext("2d"); //parte visual
+
+			document.addEventListener("keydown", keyPush); //toda vez que uma tecla for pressionada executa a função keypush
+
+			setInterval(game, 80);//define um intervalo que uma função vai ser chamada
+
+
+			const vel = 1; //quantas casas a cobra vai andar quando vc chamar esse função
+
+
+			var vx = vy = 0; //vai começar com velocidade zero
+
+			var px =10; //na posição 10
+			var py = 15;
+
+
+			var tp = 30; //tamanho de cada quadrado
+
+			var qp = 20; //quantidade de quadrados dentro do tabuleiro
+
+			var ax=ay=15; //posição inicial da maçã
+
+
+			var trail = [];
+			tail = 5;// rabo da cobra
+
+
+			function game(){
+				px += vx; //posição da cabeça da cobra *começa parada*
+
+				py += vy;
+				if (px <0) {//se ela ultrapassar a borda esquerda ela tem que ir para a borda do lado direito
+					px = qp-1;
+				}
+				if (px > qp-1) {
+					px = 0;
+				}
+				if (py < 0) {
+					py = qp-1;
+				}
+				if (py > qp-1) {
+					py = 0;
+				}
+
+				ctx.fillStyle = "black";
+				ctx.fillRect(0,0, stage.width, stage.height);
+
+				ctx.fillStyle = "red";//pintando a maçã
+				ctx.fillRect(ax*tp, ay*tp, tp,tp);
+
+				ctx.fillStyle = "gray";//pintando o rastro da cobra
+				for (var i = 0; i < trail.length; i++) {
+					ctx.fillRect(trail[i].x*tp, trail[i].y*tp, tp-1,tp-1);
+					if (trail[i].x == px && trail[i].y == py)// se a cabeça está batendo no rabo
+
+					{
+						vx = vy=0;//se a cabeça encostar no rabo o jogo acaba
+
+						tail =5;
+					}
+				}
+
+				trail.push({x:px,y:py }) // criando um objeto json
+				while (trail.length > tail) { //validação para ver se o rastro não esta maior que o rabo da cobra
+					trail.shift();//tira o primeiro elemento do array se ele for maior que a calda
+
+				}
+
+				if (ax==px && ay==py){
+					tail++;
+					ax = Math.floor(Math.random()*qp);  //posicionando a maçã para outro lugar do tabuleiro
+					ay = Math.floor(Math.random()*qp);
+				}
+
+			}
+
+			function keyPush(event){//definindo a movimentação da cobra
+
+				switch (event.keyCode) {
+					case 37: //tecla da esquerda
+						vx = -vel;
+						vy = 0;
+						break;
+					case 38: //tecla de cima
+						vx = 0;
+						vy = -vel;
+						break;
+					case 39: //tecla da direita
+						vx = vel;
+						vy = 0;
+						break;
+					case 40: //tecla da baixo
+						vx = 0;
+						vy = vel;
+						break;			
+					default:
+						
+						break;
+				}
+
+
+			}
+
+		}
+
+	</script>
+</body>
+</html>
